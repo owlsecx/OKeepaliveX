@@ -18,22 +18,18 @@
 
 ## 📌 Overview
 
-Offline keepalived VRRP / LVS configuration-hardening auditor
+OKeepaliveX is an offline, read-only auditor for keepalived (VRRP / LVS) configuration. It parses nested `keepalived.conf` blocks (including recursive includes) and reviews VRRP authentication, unicast/multicast exposure, script security, LVS health checks, global_defs, and systemd options. Secrets are masked; reports export to TXT, Markdown, JSON, CSV, or SARIF.
 
 ---
 
 ## ✨ Features
 
-- Stdlib keepalived.conf parser — nested blocks, quoted strings, '#' / '!' comments, recursive include globs
-- VRRP authentication — PASS plaintext, AH, missing auth, default / weak / truncated / reused auth_pass
-- Unicast vs multicast exposure, unicast_src_ip, public peers, vrrp_version, VRID collisions, priority / preempt sanity, advert_int, gratuitous-ARP tuning
-- Script security — script_user, enable_script_security, vrrp_script / notify / MISC_CHECK paths, /tmp scripts, world-writable files and directories, shell metachars
-- LVS virtual_server — lb_kind, persistence, health checks (HTTP_GET vs SSL_GET, connect_timeout, digest, delay_loop)
-- global_defs — router_id, SMTP alerts, SNMP / DBus, dynamic_interfaces, vrrp_strict, lvs_sync_daemon
-- systemd unit / drop-in / sysconfig option review
-- Secrets masked everywhere; --root offline tree audits
-- Export TXT / Markdown / JSON / CSV / SARIF 2.1.0
-- Self-test --demo, CI gates --fail-on / --min-severity
+- Stdlib keepalived.conf parser with nested blocks, quoted strings, comments, and recursive include globs
+- VRRP authentication checks (PASS plaintext, AH, missing/weak/reused `auth_pass`)
+- Unicast vs multicast exposure, VRID collisions, priority/preempt, and advert_int sanity
+- Script security: `script_user`, `enable_script_security`, notify/MISC_CHECK paths, world-writable scripts
+- LVS virtual_server health-check review and global_defs / SNMP / DBus / systemd unit analysis
+- Secret masking, offline `--root` audits, multi-format export, `--demo` and CI severity gates
 
 ---
 
@@ -47,7 +43,10 @@ Offline keepalived VRRP / LVS configuration-hardening auditor
 ## 🚀 Usage
 
 ```bash
-./OKeepaliveX
+./OKeepaliveX -c /etc/keepalived/keepalived.conf --scan
+./OKeepaliveX --root ./collected -f sarif -o keepalive.sarif
+./OKeepaliveX --demo --fail-on high
+./OKeepaliveX --help
 ```
 
 ---
